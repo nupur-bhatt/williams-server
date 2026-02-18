@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 
 const app = express();
-
+dotenv.config();
 app.use(cors());
 app.use(express.json());
 
@@ -13,7 +14,16 @@ app.get("/", (req, res) => {
 
 app.post("/booking", async (req, res) => {
   try {
-    const { fullName, email, phone, serviceType, message } = req.body;
+
+    const fullName = req.body.fullName;
+    const phone = req.body.phone;
+    const email = req.body.email;
+    const serviceType = req.body.serviceType;
+    const propertyType = req.body.propertyType;
+    const date = req.body.date;
+    const time = req.body.time;
+    const address = req.body.address;
+    const details = req.body.details;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -33,12 +43,15 @@ app.post("/booking", async (req, res) => {
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
         <p><strong>Service:</strong> ${serviceType}</p>
-        <p><strong>Message:</strong> ${message}</p>
+        <p><strong>Property:</strong> ${propertyType}</p>
+        <p><strong>Proposed Date:</strong> ${date}</p>
+        <p><strong>Proposed Time:</strong> ${time}</p>
+        <p><strong>Address:</strong> ${address}</p>
+        <p><strong>Message:</strong> ${details}</p>
       `,
     };
 
     await transporter.sendMail(mailOptions);
-
     res.json({ message: "Booking email sent successfully!" });
 
   } catch (error) {
